@@ -80,7 +80,7 @@ $filterenabledassigned = $assignedobservee !== null;
 $assignedprefill = [
     'id' => $id,
     'observee' => $assignedobservee,
-    'observeefilter_enabled' => $filterenabledassigned    
+    'observeefilter_enabled' => $filterenabledassigned
 ];
 
 $assignedfilterform = new \mod_observation\assignedfilter_form(null, $assignedprefill);

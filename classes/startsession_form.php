@@ -77,7 +77,7 @@ class startsession_form extends \moodleform {
 
         $mform->addElement('hidden', 'observerid', $prefill['observerid']);
         $mform->setType('observerid', PARAM_INT);
-        
+
         $mform->setType('observername', PARAM_INT);
 
         // Set defaults.
