@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford <hungerford31@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,26 +33,20 @@ require_once($CFG->libdir.'/formslib.php');
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford <hungerford31@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class startsession_form extends \moodleform {
+class assignedfilter_form extends \moodleform {
     /**
      * Defines the session creation form
      */
     public function definition() {
         global $PAGE;
-        global $USER;
 
         $mform = $this->_form;
-
         $prefill = $this->_customdata;
 
-        $mform->addElement('header', 'startnewheading', 'Start New');
-
-        // Observer and Observee Selection.
-
-        // Get list of users full names .
+        // Get list of users full names.
         $context = $PAGE->context;
         $finalusers = [];
         $users = get_enrolled_users($context);
@@ -64,26 +58,31 @@ class startsession_form extends \moodleform {
             'multiple' => false,
         );
 
-        $mform->addElement('text', 'observername', get_string('observer', 'observation'));
-        $mform->setDefault('observername', fullname($USER));
-        $mform->freeze('observername');
+        // Change the button text depending on if the filter is enabled.
+        $buttontext = $prefill['observeefilter_enabled'] === true ? get_string('resetfilter', 'observation')
+            : get_string('applyfilter', 'observation');
 
-        $mform->addElement('autocomplete', 'observeeid', get_string('observee', 'observation'), $finalusers, $options);
-        $mform->addRule('observeeid', get_string('required', 'observation'), 'required', null, 'client');
+        $observeeselector = [
+            $mform->createElement('select', 'observee', get_string('observee', 'observation'), $finalusers, $options),
+            $mform->createElement('submit', 'submit_btn', $buttontext)
+        ];
+
+        // Interval selector block.
+        $mform->addGroup($observeeselector, 'interval_select_group', get_string('filterobservee', 'observation'), null, false);
+        $mform->disabledIf('observee', 'enable_interval');
+        $mform->setType('observee', PARAM_INT);
 
         // Hidden form elements.
         $mform->addElement('hidden', 'id', $prefill['id']);
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'observerid', $prefill['observerid']);
-        $mform->setType('observerid', PARAM_INT);
-        
-        $mform->setType('observername', PARAM_INT);
+        $mform->addElement('hidden', 'observeefilter_enabled', $prefill['observeefilter_enabled']);
+        $mform->setType('observeefilter_enabled', PARAM_BOOL);
+
+        // Disable all filter elements except the cancel button if the filter is applied.
+        $mform->disabledIf('observee', 'observeefilter_enabled', 'eq', true);
 
         // Set defaults.
         $this->set_data($prefill);
-
-        // Action buttons.
-        $mform->addElement('submit', 'submitbtn', get_string('start', 'observation'));
     }
 }

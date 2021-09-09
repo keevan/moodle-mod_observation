@@ -148,6 +148,7 @@ $string['noobservee'] = 'No observee';
 $string['observeename'] = 'Observee name';
 $string['filtertimeslots'] = 'Filter timeslots';
 $string['filterwithin'] = 'Filter within';
+$string['filterobservee'] = 'Filter observee';
 $string['applyfilter'] = 'Apply filter';
 $string['resetfilter'] = 'Clear filter';
 $string['selectingslot'] = 'Select timeslot';

@@ -128,4 +128,41 @@ class timeslots {
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
     }
+
+
+    /**
+     * Creates a table that displays all the observation timeslots assigned to a person as an observer, with optional time filter.
+     * @param int $observationid ID of the observation instance to get the observation time slots from.
+     * @param \moodle_url $callbackurl URL for action buttons in table to callback to
+     * @param int $displaymode display mode for table
+     * @param int $userid ID of the user who is an observer for a given timeslot
+     * @param int $observeefilter filter for the observee column.
+     */
+    public static function observee_timeslots_table(int $observationid, \moodle_url $callbackurl, int $displaymode, int $userid,
+        int $observeefilter = 0) {
+
+        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
+
+        // Optional time filtering SQL query.
+        if ($observeefilter < 0) {
+            throw new \coding_exception("Observee id cannot be negative.");
+        }
+
+        $sql = (object) self::COMMON_SQL;
+        $sql->params['obsid'] = $observationid;
+
+        // Add observer/observee ID filter.
+        $sql->where .= ' AND :userid IN (observee_id, observer_id)';
+        $sql->params['userid'] = $userid;
+
+        if ($observeefilter !== 0) {
+            // Add observee filter.
+
+            $sql->where .= ' AND observee_id = :observeefilter';
+            $sql->params['observeefilter'] = $observeefilter;
+        }
+
+        $table->sql = $sql;
+        return $table->out($table->pagesize, true);
+    }
 }

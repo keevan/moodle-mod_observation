@@ -30,6 +30,7 @@ $action = optional_param('action', null, PARAM_TEXT);
 $slotid = optional_param('slotid', null, PARAM_INT);
 $interval = optional_param('interval', null, PARAM_INT);
 $intervalmultiplier = optional_param('period', null, PARAM_INT);
+$assignedobservee = optional_param('assignedobservee', null, PARAM_INT);
 
 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
@@ -75,6 +76,26 @@ if ($fromform = $upcomingfilterform->get_data()) {
     }
 }
 
+$filterenabledassigned = $assignedobservee !== null;
+$assignedprefill = [
+    'id' => $id,
+    'observee' => $assignedobservee,
+    'observeefilter_enabled' => $filterenabledassigned    
+];
+
+$assignedfilterform = new \mod_observation\assignedfilter_form(null, $assignedprefill);
+
+if ($fromform = $assignedfilterform->get_data()) {
+    if ($fromform->observeefilter_enabled) {
+        // Disable filter.
+        redirect($pageurl);
+    } else {
+        // Enable filter.
+        // Redirect, putting the filter into the URL args so the table and form can pick it up.
+        redirect(new moodle_url('/mod/observation/sessionview.php', ['id' => $id, 'assignedobservee' => $fromform->observee]));
+    }
+}
+
 $startsessionformprefill = [
     'id' => $id,
     'observerid' => $USER->id
@@ -96,11 +117,23 @@ echo $OUTPUT->heading(get_string('observationsessions', 'observation'), 2);
 // See upcoming assigned timeslots table and form.
 echo $OUTPUT->heading(get_string('upcomingtimeslots', 'observation'), 3);
 $upcomingfilterform->display();
+$assignedfilterform->display();
+
 
 // If there are URL args from the filter form, calculate the filter amount to pass to the table.
 $filter = $filterenabled ? $interval * $intervalmultiplier : 0;
-echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
-\mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING, $USER->id, $filter);
+if ($filterenabled === true) {
+    echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
+    \mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING, $USER->id, $filter);
+} else if ($filterenabledassigned === true) {
+    // If there are URL args from the observeefilter form.
+    $assignedfilter = $filterenabledassigned ? $assignedobservee : 0;
+    echo \mod_observation\timeslots\timeslots::observee_timeslots_table($observation->id, $pageurl,
+    \mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING, $USER->id, $assignedfilter);
+} else {
+    echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
+    \mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING, $USER->id);
+}
 
 // Start new session form block.
 $startsessionform->display();
