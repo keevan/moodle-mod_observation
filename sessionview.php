@@ -105,9 +105,9 @@ $userid = $USER->id;
 // See if a timeslot already exists for this session.
 $slotexist = $DB->get_record('observation_timeslots', array('observer_id' => $userid, 'obs_id' => $id));
 
-$starttime = $DB->get_record('observation_timeslots', array('obs_id' => $id), 'start_time');
+$DB->get_record('observation_timeslots', array('obs_id' => $id), $starttime = 'start_time');
 
-$slotexistswithinfilter = (time() + ($filter * 60)) > $starttime;
+$slotexistswithinfilter = (time() + $filter) > 'start_time';
 
 if ($slotexist !== false) {
     if ($filterenabled === true) {
@@ -132,7 +132,7 @@ $startsessionform->display();
 echo $OUTPUT->heading(get_string('previoussessions', 'observation'), 3);
 
 // See if a timeslot already exists for this session history.
-$slothistoryexist = $DB->get_record('observation_timeslots', array('obs_id' => $id));
+$slothistoryexist = $DB->get_record('observation_timeslots', array('observer_id' => $userid, 'obs_id' => $id));
 
 if ($slothistoryexist !== false) {
     echo \mod_observation\table\viewsessions\viewsessions_display::ob_sess_table($observation->id, $pageurl);
