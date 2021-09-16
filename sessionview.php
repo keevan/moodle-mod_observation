@@ -107,7 +107,7 @@ $slotexist = $DB->get_record('observation_timeslots', array('observer_id' => $us
 
 $starttime = $DB->get_record('observation_timeslots', array('obs_id' => $id), 'start_time');
 
-$slotexistswithinfilter = (time()+($filter*60)) > $starttime;
+$slotexistswithinfilter = (time() + ($filter * 60)) > $starttime;
 
 if ($slotexist !== false) {
     if ($filterenabled === true) {
@@ -115,7 +115,7 @@ if ($slotexist !== false) {
             echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
             \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING, $USER->id, $filter);
         } else if ($slotexistswithinfilter !== true) {
-        echo "Nothing to display";
+            echo "Nothing to display";
         }
     } else if ($filterenabled !== true) {
         echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
