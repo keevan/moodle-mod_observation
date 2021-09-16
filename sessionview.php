@@ -99,14 +99,46 @@ $upcomingfilterform->display();
 
 // If there are URL args from the filter form, calculate the filter amount to pass to the table.
 $filter = $filterenabled ? $interval * $intervalmultiplier : 0;
-echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
-\mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING, $USER->id, $filter);
+
+$userid = $USER->id;
+
+// See if a timeslot already exists for this session.
+$slotexist = $DB->get_record('observation_timeslots', array('observer_id' => $userid, 'obs_id' => $id));
+
+$starttime = $DB->get_record('observation_timeslots', array('obs_id' => $id), 'start_time');
+
+$slotexistswithinfilter = (time()+($filter*60)) > $starttime;
+
+if ($slotexist !== false) {
+    if ($filterenabled === true) {
+        if ($slotexistswithinfilter === true) {
+            echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
+            \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING, $USER->id, $filter);
+        } else if ($slotexistswithinfilter !== true) {
+        echo "Nothing to display";
+        }
+    } else if ($filterenabled !== true) {
+        echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
+        \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING, $USER->id);
+    }
+} else if ($slotexist === false) {
+    echo "Nothing to display";
+}
 
 // Start new session form block.
 $startsessionform->display();
 
 // Session history block.
 echo $OUTPUT->heading(get_string('previoussessions', 'observation'), 3);
-echo \mod_observation\table\viewsessions\viewsessions_display::ob_sess_table($observation->id, $pageurl);
+
+// See if a timeslot already exists for this session history.
+$slothistoryexist = $DB->get_record('observation_timeslots', array('obs_id' => $id));
+
+if ($slothistoryexist !== false) {
+    echo \mod_observation\table\viewsessions\viewsessions_display::ob_sess_table($observation->id, $pageurl);
+} else if ($slotexist === false) {
+    echo "Nothing to display";
+}
+
 
 echo $OUTPUT->footer();
