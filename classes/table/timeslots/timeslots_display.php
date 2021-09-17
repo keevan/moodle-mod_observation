@@ -90,7 +90,12 @@ class timeslots_display {
         $sql->params['obsid'] = $observationid;
 
         $table->sql = $sql;
-        return $table->out($table->pagesize, true);
+        
+        if (!$table->started_output){
+            return "Nothing to DIsplay";
+        } else {
+            return $table->out($table->pagesize, true);;
+        } 
     }
 
     /**
@@ -126,6 +131,15 @@ class timeslots_display {
         }
 
         $table->sql = $sql;
-        return $table->out($table->pagesize, true);
+        //$tableoutput = $table->out($table->pagesize, true);
+
+        // Idea 1
+        // Started output 
+        
+        if (!$table->started_output){
+            return "Nothing to Display";
+        } else {
+            return $table->out($table->pagesize, true);
+        } 
     }
 }

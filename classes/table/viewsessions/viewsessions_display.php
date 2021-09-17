@@ -63,6 +63,10 @@ class viewsessions_display {
             'params' => ['obsid' => $observationid]
         ];
         $table->sql = $sql;
-        return $table->out($table->pagesize, true);
+        if (!$table->started_output){
+            return "Nothing to Display";
+        } else {
+            return $table->out($table->pagesize, true);
+        } 
     }
 }
