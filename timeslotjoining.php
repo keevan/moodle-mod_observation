@@ -88,5 +88,8 @@ if ($signedupslot === false) {
     \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_ASSIGNED, $USER->id);
 }
 
+echo $OUTPUT->heading(get_string('selectingslot', 'observation'), 2);
+
+
 // Moodle footer.
 echo $OUTPUT->footer();
