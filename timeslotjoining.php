@@ -100,5 +100,8 @@ if ($signedupslot === false) {
         get_string('setuptimeslotnotifications', 'observation'), 'GET');
 }
 
+echo $OUTPUT->heading(get_string('selectingslot', 'observation'), 2);
+
+
 // Moodle footer.
 echo $OUTPUT->footer();
