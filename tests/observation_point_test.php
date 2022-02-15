@@ -116,7 +116,7 @@ class observation_point_test extends advanced_testcase {
         }
 
         // Ensure contains point just added.
-        $this->assertContains($point->title, array_column($returndata, 'title'));
+        $this->assertTrue(in_array($point->title, array_column($returndata, 'title')));
 
         // Re-get points to get ID.
         $returndata = \mod_observation\observation_manager::get_observation_points($this->instance->id);
@@ -141,8 +141,8 @@ class observation_point_test extends advanced_testcase {
         $returndata = \mod_observation\observation_manager::get_observation_points($this->instance->id);
         $returnedpoint = array_values($returndata)[0];
 
-        $this->assertContains($editeddata->title, array_column($returndata, 'title'));
-        $this->assertNotContains($data['title'], array_column($returndata, 'title'));
+        $this->assertTrue(in_array($editeddata->title, array_column($returndata, 'title')));
+        $this->assertFalse(in_array($data['title'], array_column($returndata, 'title')));
 
         // Delete point.
         \mod_observation\observation_manager::delete_observation_point($this->instance->id, $returnedpoint->id);
