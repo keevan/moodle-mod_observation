@@ -108,6 +108,7 @@ class timeslots_test extends advanced_testcase {
         $this->assertEquals($thistimeslot->id, $timeslotid);
 
         $alltimeslots = \mod_observation\timeslot_manager::get_time_slots($obid);
+        $this->assertTrue(in_array($timeslotid, array_column($alltimeslots, 'id')));
         $this->assertContains($timeslotid, array_column($alltimeslots, 'id'));
 
         // Ensure calendar event created for observer.

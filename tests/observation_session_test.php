@@ -130,15 +130,15 @@ class observation_session_test extends advanced_testcase {
         // Ensure the observation points are returned.
         $sessiondataids = array_column($sessiondata, 'point_id');
 
-        $this->assertContains($this->pointid1, $sessiondataids);
-        $this->assertContains($this->pointid2, $sessiondataids);
+        $this->assertContains($this->pointid1, $sessiondataids, '', true, false);
+        $this->assertContains($this->pointid2, $sessiondataids, '', true, false);
 
         // Get incomplete points (should be both of them.).
         $incomplete = \mod_observation\session_manager::get_incomplete_points($sessionid);
         $incompleteids = array_column($incomplete, 'point_id');
 
-        $this->assertContains($this->pointid1, $incompleteids);
-        $this->assertContains($this->pointid2, $incompleteids);
+        $this->assertContains($this->pointid1, $incompleteids, '', true, false);
+        $this->assertContains($this->pointid2, $incompleteids, '', true, false);
 
         // Current grade should be zero.
         $currentgrade = \mod_observation\session_manager::calculate_grade($sessionid);
@@ -154,8 +154,8 @@ class observation_session_test extends advanced_testcase {
         $incomplete = \mod_observation\session_manager::get_incomplete_points($sessionid);
         $incompleteids = array_column($incomplete, 'point_id');
 
-        $this->assertNotContains($this->pointid1, $incompleteids);
-        $this->assertContains($this->pointid2, $incompleteids);
+        $this->assertNotContains($this->pointid1, $incompleteids, '', true, false);
+        $this->assertContains($this->pointid2, $incompleteids, '', true, false);
 
         // Current grade should be 3.
         $currentgrade = \mod_observation\session_manager::calculate_grade($sessionid);
